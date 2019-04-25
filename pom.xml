@@ -45,6 +45,7 @@
         
         <webjars.bootstrap.version>3.3.7</webjars.bootstrap.version>
 		<webjars.jquery.version>3.2.1</webjars.jquery.version>
+        <project.junit.version>5.3.2</project.junit.version>
     </properties>
 
     <!-- Add typical dependencies for a web application -->
@@ -101,6 +102,16 @@
             <artifactId>selenium-java</artifactId>
             <version>3.4.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${project.junit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${project.junit.version}</version>
         </dependency>
         <!-- Provided (for embedded war support) -->
         <!--<dependency>-->
