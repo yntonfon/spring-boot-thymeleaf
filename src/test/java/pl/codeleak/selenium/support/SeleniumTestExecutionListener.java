@@ -94,18 +94,4 @@ public class SeleniumTestExecutionListener extends AbstractTestExecutionListener
         return new URL("http://" + seleniumHost + ":" + seleniumPort + "/wd/hub");
     }
 
-    private static DesiredCapabilities buildRemoteCapability() {
-        DesiredCapabilities capability = DesiredCapabilities.firefox();
-        capability.setBrowserName("firefox");
-        capability.setPlatform(Platform.LINUX);
-        return capability;
-    }
-
-    private static URL buildSeleniumHubUrl() throws MalformedURLException {
-        String seleniumHost = System.getProperty("seleniumHost");
-        String seleniumPort = System.getProperty("seleniumPort");
-
-        return new URL("http://" + seleniumHost + ":" + seleniumPort + "/wd/hub");
-    }
-
 }
