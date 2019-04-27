@@ -3,6 +3,8 @@ package pl.codeleak.selenium.support;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxBinary;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -36,7 +38,10 @@ public class SeleniumTestExecutionListener extends AbstractTestExecutionListener
 
             SeleniumTest annotation = findAnnotation(
                     testContext.getTestClass(), SeleniumTest.class);
-            webDriver = BeanUtils.instantiate(annotation.driver());
+
+            FirefoxOptions firefoxOptions = getFirefoxOptions();
+
+            webDriver = BeanUtils.instantiateClass(annotation.driver().getDeclaredConstructor(FirefoxOptions.class), firefoxOptions);
 
             ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) context;
             ConfigurableListableBeanFactory bf = configurableApplicationContext.getBeanFactory();
@@ -70,6 +75,27 @@ public class SeleniumTestExecutionListener extends AbstractTestExecutionListener
         String methodName = toLowerUnderscore(testContext.getTestMethod().getName());
         Files.copy(screenshot.toPath(),
                 Paths.get("screenshots", testName + "_" + methodName + "_" + screenshot.getName()));
+    }
+
+    private FirefoxOptions getFirefoxOptions() {
+        setSystemProperty("webdriver.gecko.driver", System.getenv("WEBDRIVER_BIN"));
+        setSystemProperty("webdriver.firefox.bin", System.getenv("FIREFOX_BIN"));
+
+        FirefoxBinary firefoxBinary = getFirefoxBinary();
+
+        FirefoxOptions firefoxOptions = new FirefoxOptions();
+        firefoxOptions.setBinary(firefoxBinary);
+        return firefoxOptions;
+    }
+
+    private void setSystemProperty(String property, String value) {
+        System.setProperty(property, value);
+    }
+
+    private FirefoxBinary getFirefoxBinary() {
+        FirefoxBinary firefoxBinary = new FirefoxBinary();
+        firefoxBinary.addCommandLineOptions("-headless");
+        return firefoxBinary;
     }
 
 }
