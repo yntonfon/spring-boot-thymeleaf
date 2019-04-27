@@ -80,25 +80,18 @@ public class SeleniumTestExecutionListener extends AbstractTestExecutionListener
                 Paths.get("screenshots", testName + "_" + methodName + "_" + screenshot.getName()));
     }
 
-    private FirefoxOptions getFirefoxOptions() {
-        setSystemProperty("webdriver.gecko.driver", System.getenv("WEBDRIVER_BIN"));
-        setSystemProperty("webdriver.firefox.bin", System.getenv("FIREFOX_BIN"));
-
-        FirefoxBinary firefoxBinary = getFirefoxBinary();
-
-        FirefoxOptions firefoxOptions = new FirefoxOptions();
-        firefoxOptions.setBinary(firefoxBinary);
-        return firefoxOptions;
+    private static DesiredCapabilities buildRemoteCapability() {
+        DesiredCapabilities capability = DesiredCapabilities.firefox();
+        capability.setBrowserName("firefox");
+        capability.setPlatform(Platform.LINUX);
+        return capability;
     }
 
-    private void setSystemProperty(String property, String value) {
-        System.setProperty(property, value);
-    }
+    private static URL buildSeleniumHubUrl() throws MalformedURLException {
+        String seleniumHost = System.getProperty("seleniumHost");
+        String seleniumPort = System.getProperty("seleniumPort");
 
-    private FirefoxBinary getFirefoxBinary() {
-        FirefoxBinary firefoxBinary = new FirefoxBinary();
-        firefoxBinary.addCommandLineOptions("-headless");
-        return firefoxBinary;
+        return new URL("http://" + seleniumHost + ":" + seleniumPort + "/wd/hub");
     }
 
     private static DesiredCapabilities buildRemoteCapability() {
