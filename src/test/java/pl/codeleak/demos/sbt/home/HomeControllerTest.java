@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +15,7 @@ import pl.codeleak.selenium.support.SeleniumTest;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = "server.port=9000", webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@SeleniumTest(driver = FirefoxDriver.class, baseUrl = "http://localhost:9000")
+@SeleniumTest(driver = RemoteWebDriver.class, baseUrl = "http://localhost:9000")
 public class HomeControllerTest {
 
     @Autowired

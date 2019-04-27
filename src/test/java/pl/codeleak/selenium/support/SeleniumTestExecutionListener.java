@@ -1,10 +1,9 @@
 package pl.codeleak.selenium.support;
 
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -14,6 +13,8 @@ import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -39,9 +40,11 @@ public class SeleniumTestExecutionListener extends AbstractTestExecutionListener
             SeleniumTest annotation = findAnnotation(
                     testContext.getTestClass(), SeleniumTest.class);
 
-            FirefoxOptions firefoxOptions = getFirefoxOptions();
+            URL seleniumHubUrl = buildSeleniumHubUrl();
+            DesiredCapabilities capability = buildRemoteCapability();
 
-            webDriver = BeanUtils.instantiateClass(annotation.driver().getDeclaredConstructor(FirefoxOptions.class), firefoxOptions);
+            webDriver = BeanUtils.instantiateClass(annotation.driver().getDeclaredConstructor(
+                    URL.class, Capabilities.class), capability);
 
             ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) context;
             ConfigurableListableBeanFactory bf = configurableApplicationContext.getBeanFactory();
@@ -96,6 +99,20 @@ public class SeleniumTestExecutionListener extends AbstractTestExecutionListener
         FirefoxBinary firefoxBinary = new FirefoxBinary();
         firefoxBinary.addCommandLineOptions("-headless");
         return firefoxBinary;
+    }
+
+    private static DesiredCapabilities buildRemoteCapability() {
+        DesiredCapabilities capability = DesiredCapabilities.firefox();
+        capability.setBrowserName("firefox");
+        capability.setPlatform(Platform.LINUX);
+        return capability;
+    }
+
+    private static URL buildSeleniumHubUrl() throws MalformedURLException {
+        String seleniumHost = System.getProperty("seleniumHost");
+        String seleniumPort = System.getProperty("seleniumPort");
+
+        return new URL("http://" + seleniumHost + ":" + seleniumPort + "/wd/hub");
     }
 
 }
